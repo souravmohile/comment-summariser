@@ -1,0 +1,57 @@
+This is where I will add general thoughts about this project.
+
+The main idea was that for a live video, we have a summary and score for the comments, 
+which is tied to the timemline of the video.
+
+Now while working on this project I have been hit with some questions that will define the approach
+that we will take to build this project.
+
+1. Will this system work only on live videos? or will it also work for uploaded full vids?
+    - The scope started off with the idea of live vidoes but then again having this system for
+    non live videos also sounds nice.
+    - So there will be mainly 3 types: Live videos that are ongoing, Live videos that have eneded, 
+    Normal videos.
+2. What platform is this aimed towards? 
+    - If youtube, the comments are relatively straightforward to work with and will be dealt with
+    easily by out of the box language models.
+    - Although if I am a platform like Twitch, the comments contain a lot of niche lingo and this
+    lingo keeps changing through out time. This would cause an issue for out of the box models,
+    but could be handled through prompting/rag/finetuning. 
+    - Continual training of models or prompt update sounds fun to work with.
+3. How will I source my data?
+    - Will I be able to manage everything through twitch/youtube APIs without upsetting the rate 
+    limit gods?
+    - Will I need to scrape data? 
+    - Where will this be stored? I was planning to use kafka to store this data temporarily 
+    just for processing and then once the livestream ends the data is deleted, or if its a video, 
+    the summary and score data stays?
+4. What will be my frontend? 
+    - Currently a simple frontend has been made on streamlit, and although I can use streamlit to 
+    build a backend as well, I would rather use FastAPI.
+
+My plan:
+The next step I want to take is to deal with the data fetching pipeline. I want to get data, live or not, 
+from some source and then send it intervally to my processor.
+
+I will do this for live videos on youtube for now, later we can update it for twitch.
+
+If the livestream is ongoing, we will use youtube API
+If the livestream has ended, we will use pytchat
+
+1: Get youtube video link
+2: Figure out type of video and direct to the appropriate code
+
+Right so theres a blip-
+I can retrieve chat for live ongoing twitch videos but the thing is that I cannot access chat for the 
+ended VODs so now in our system we will just say that we can store this so when the video is playing back we 
+access the stored summmary etc.. but like....
+
+1. Get the live comments for an ongoing video from the twitch IRC
+2. Work on the backend part of processing
+3. Worry about the video and frontend later
+
+when you put this project on github for the portfolio make sure that you also show results of the
+finetuned vs non finetuned model so that the effect of your finetuning is shown in the project.
+
+ive spent the day learning about asyncio and websockets... will take more hands on work with this but 
+i seem to get the idea behind it... gonna nab the code from the documentation for websockets
