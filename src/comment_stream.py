@@ -2,12 +2,27 @@ import os
 import websockets
 import asyncio
 import sys
+import requests
 import config
 
 # Set the event loop policy for Windows
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
+def get_access_token():
+    url = "https://id.twitch.tv/oauth2/token"
+
+    refresh_data = {
+        'grant_type': 'refresh_token',
+        'refresh_token': config.REFRESH_TOKEN,
+        'client_id': config.CLIENT_ID,
+        'client_secret': config.CLIENT_SECRET
+    }
+
+    # Send the POST request
+    response = requests.post(url, data=refresh_data)
+
+    return response.json()["access_token"]
 
 async def listen_to_chat():
 
@@ -15,7 +30,7 @@ async def listen_to_chat():
     async with websockets.connect(config.uri) as websocket:
 
         # Authentication
-        await websocket.send(f"PASS oauth:{config.ACCESS_TOKEN}")
+        await websocket.send(f"PASS oauth:{get_access_token()}")
         await websocket.send(f"NICK {config.USERNAME}")
         
         # Join channel
@@ -46,8 +61,8 @@ async def listen_to_chat():
                     if config.counter == config.max_count:
 
                         # Setting a version for each new batch of messages
-                        config.version += 1
-                        with open(f"data/chat_version{config.version}.txt", "w", encoding="utf8") as chat_file:
+                        config.chat_version += 1
+                        with open(f"data/chat_version{config.chat_version}.txt", "w", encoding="utf8") as chat_file:
                             for i in config.buffer:
                                 chat_file.write(i + "\n")
 
@@ -62,10 +77,4 @@ async def listen_to_chat():
             except asyncio.CancelledError:
                 print("Task was cancelled, shutting down.")
             finally:
-                print("Cleanup done.")
-
-if __name__ == "__main__":
-    try:
-        asyncio.run(listen_to_chat())
-    except KeyboardInterrupt:
-        print("Program interrupted by user, shutting down...")
+                print("Cleanup done.")    
