@@ -14,9 +14,9 @@ def get_access_token():
 
     refresh_data = {
         'grant_type': 'refresh_token',
-        'refresh_token': config.REFRESH_TOKEN,
-        'client_id': config.CLIENT_ID,
-        'client_secret': config.CLIENT_SECRET
+        'refresh_token': config.TWITCH_REFRESH_TOKEN,
+        'client_id': config.TWITCH_CLIENT_ID,
+        'client_secret': config.TWITCH_CLIENT_SECRET
     }
 
     # Send the POST request

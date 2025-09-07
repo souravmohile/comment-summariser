@@ -1,2 +1,6 @@
 watchfiles
 groq
+websockets
+dotenv
+pandas
+requests
