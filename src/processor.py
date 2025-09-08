@@ -4,8 +4,8 @@ from groq import Groq
 import config
 from watchfiles import awatch
 import asyncio
-
-chats = "hello these are the chats"
+import ast
+import json
 
 # Function for getting the prompt
 def get_prompt(chats):
@@ -50,3 +50,17 @@ async def watch_file():
                 print("Generating response...")
                 response = llm(prompt)
                 print("LLM response:", response)
+
+                curls = "{" + response.split("{", 1)[1].split("}", 1)[0] + "}"
+
+                summary = ast.literal_eval(curls).get("summary")
+                score = ast.literal_eval(curls).get("score")
+
+                # print(summary)
+                # print(score)
+
+                with open(f"data/forfront/data.js", "w", encoding="utf8") as f:
+                    f.write(f"window.score = {score};\n")
+                    f.write(f"window.summary = `{summary}`;\n")
+                
+

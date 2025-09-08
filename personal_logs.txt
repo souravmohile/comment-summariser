@@ -97,3 +97,11 @@ you will get a rewsponse like this-
 'scope': ['chat:read'], 'token_type': 'bearer'}
 Initially for the databse i am planning to use a simple list or deque... we could use pandas along
 with this for storing the data but then for the final project we will go with kafka.
+
+For the frontend I have vibecoded the files but now for plugging values i need to parse the LLM output 
+maybe use literal eval from ast and then make a data.js file that will be used by the frontend to
+display the values.
+
+start the http server in a separate terminal
+start main.py in the python terminal
+
