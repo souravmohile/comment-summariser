@@ -1,35 +1,134 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      body {
-        background: #0e0e10;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
+<head>
+  <title>Twitch + Sentiment Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0e0e10;
+      color: white;
+      font-family: sans-serif;
+      display: flex;
+      height: 100vh;
+    }
 
-      #twitch-embed {
-        width: 80%;
-        max-width: 1000px;
-        aspect-ratio: 16/9;
-        border-radius: 1rem;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-      }
-    </style>
-  </head>
-  <body>
+    #left {
+      flex: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    #right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    #twitch-embed {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+
+    #gauge-container {
+      background: #1c1c22;
+      border-radius: 1rem;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    #chat-summary {
+      flex: 1;
+      background: #1c1c22;
+      border-radius: 1rem;
+      padding: 1rem;
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="left">
     <div id="twitch-embed"></div>
+  </div>
 
-    <script src="https://embed.twitch.tv/embed/v1.js"></script>
-    <script type="text/javascript">
-      new Twitch.Embed("twitch-embed", {
-        width: "100%",
-        height: "100%",
-        channel: "IShowSpeed",
-        parent: ["localhost"] // change this to your domain when hosting
-      });
-    </script>
-  </body>
+  <div id="right">
+    <div id="gauge-container">
+      <h3>Sentiment Score</h3>
+      <div id="gauge" style="width:100%; height:200px;"></div>
+    </div>
+
+    <div id="chat-summary">
+      <h3>Live Chat Summary</h3>
+      <div id="summary-content">
+        Loading chat summary...
+      </div>
+    </div>
+  </div>
+
+  <!-- Twitch Embed -->
+  <script src="https://embed.twitch.tv/embed/v1.js"></script>
+  <script>
+    new Twitch.Embed("twitch-embed", {
+      width: "100%",
+      height: "100%",
+      channel: "IShowSpeed",
+      parent: ["localhost"]
+    });
+  </script>
+
+  <!-- JustGage for gauge -->
+  <script src="https://cdn.jsdelivr.net/npm/raphael@2.3.0/raphael.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/justgage@1.3.2/justgage.min.js"></script>
+
+  <!-- Sentiment + Chat Update Script -->
+  <script>
+    const gauge = new JustGage({
+      id: "gauge",
+      value: 3,
+      min: 1,
+      max: 5,
+      decimals: 1,
+      gaugeWidthScale: 0.6,
+      counter: true,
+      levelColors: ["#ff4d4d", "#ffaa00", "#ffff00", "#aaff00", "#00ff00"],
+      label: "Sentiment"
+    });
+
+    const chatSummaryBox = document.getElementById("summary-content");
+
+    function getRandomSentiment() {
+      return (Math.random() * 4 + 1).toFixed(1);
+    }
+
+    function getRandomSummary() {
+      const samples = [
+        "People are hyped about the gameplay!",
+        "Chat is mixed—some are loving it, others not so much.",
+        "Lots of spam, but generally positive vibes.",
+        "Chat is calm right now, not much activity.",
+        "Chat is super toxic at the moment. 😬"
+      ];
+      return samples[Math.floor(Math.random() * samples.length)];
+    }
+
+    // Simulate live updates
+    setInterval(() => {
+      const newSentiment = getRandomSentiment();
+      gauge.refresh(newSentiment);
+      chatSummaryBox.textContent = getRandomSummary();
+    }, 3000); // every 3 seconds
+  </script>
+</body>
 </html>
